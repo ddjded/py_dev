@@ -2,10 +2,10 @@
 # -*- coding: utf-8 -*-
 # Replace the serverURL and technicianKey
 
-import requests
 import json
 import sys
 import time
+import requests
 
 filename = str(sys.argv[1])
 with open(filename) as data_file:
@@ -13,7 +13,7 @@ with open(filename) as data_file:
 
 requestObj = data['request']
 
-reqID = requestObj['WORKORDERID']
+reqID   = requestObj['WORKORDERID']
 reqSite = requestObj['SITE']
 reqTech = requestObj['TECHNICIAN']
 
@@ -30,48 +30,35 @@ found = None
 checker = 0
 
 with requests.Session() as s:
-    r = s.get(serverURL + '/api/v3/request/' + reqID
-              + '/tasks?TECHNICIAN_KEY=' + technicianKey)
-			  
+    r = s.get(serverURL + '/api/v3/request/' + reqID + '/tasks?TECHNICIAN_KEY=' + technicianKey)
     if r.status_code == 200:
         taskData = r.json()
         if taskData['response_status']['status'] != 'failed':
             for i in taskData['tasks']:
                 taskID = i['id']
                 title = i['title']
-                tr = s.get(serverURL + '/api/v3/tasks/' + str(taskID)+'?TECHNICIAN_KEY=' + technicianKey)
+                tr = s.get(serverURL+'/api/v3/tasks/'+str(taskID)+'?TECHNICIAN_KEY='+technicianKey)
                 if r.status_code == 200:
                     taskDetailsData = tr.json()
                     description = taskDetailsData['task']['description']
-                    if description == None:
+                    if description is None:
                         description = ''
                     for elem in requestObj.keys():
                         if str('$' + elem + '$') in description:
-                            description = description.replace('$'
-                                    + elem + '$', str(requestObj[elem]))
+                            description = description.replace('$' + elem + '$', str(requestObj[elem]))
                             found = True
                         if str('$' + elem + '$') in title:
-                            title = title.replace('$' + elem + '$',
-                                    str(requestObj[elem]))
+                            title = title.replace('$' + elem + '$', str(requestObj[elem]))
                             found = True
                         if 'resource' in requestObj:
-                            for resources in requestObj['resource'
-                                    ].keys():
-                                for questions in requestObj['resource'
-                                        ][resources].keys():
-                                    if str('$' + questions + '$') \
-    in title:
+                            for resources in requestObj['resource'].keys():
+                                for questions in requestObj['resource'][resources].keys():
+                                    if str('$' + questions + '$') in title:
                                         found = True
-                                        title = title.replace('$'
-        + questions + '$', str(requestObj['resource'
-        ][resources][questions][0]))
-                                    if str('$' + questions + '$') \
-    in description:
+                                        title = title.replace('$' + questions + '$', str(requestObj['resource'][resources][questions][0]))
+                                    if str('$' + questions + '$') in description:
                                         found = True
-                                        description = \
-    description.replace('$' + questions + '$', str(requestObj['resource'
-                        ][resources][questions][0]))
-
+                                        description = description.replace('$' + questions + '$', str(requestObj['resource'][resources][questions][0]))
                 if found:
                     checker += 1
                     taskurl = serverURL + '/api/v3/tasks/' + taskID
@@ -94,10 +81,8 @@ with requests.Session() as s:
                     print(resultjson)
                 else:
                     resultjson['result'] = 'success'
-                    resultjson['message'] = 'Unable to update tasks ' \
-                        + r.json()
+                    resultjson['message'] = 'Unable to update tasks ' + r.json()
                     print(resultjson)
-
             if checker == 0:
                 resultjson['result'] = 'success'
                 resultjson['message'] = 'Nothing to change'
@@ -106,6 +91,3 @@ with requests.Session() as s:
             resultjson['result'] = 'success'
             resultjson['message'] = 'No tasks to Update'
             print(resultjson)
-
-
-			

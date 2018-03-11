@@ -6,6 +6,10 @@ IP = input("IP - ")
 MAC = input("MAC - ")
 DESCRIPTION = input("Description - ")
 
+res = 'netsh dhcp server ' + SERVER + ' scope ' + SCOPE + ' add reservedip ' + IP + ' ' + MAC + ' ' + DESCRIPTION + ' "" BOTH'
+
+print(res)
+
 netshcmd = subprocess.Popen(
     'netsh dhcp server ' + SERVER + ' scope ' 
     + SCOPE + ' add reservedip ' 

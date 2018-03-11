@@ -1,8 +1,13 @@
 import subprocess
 
-netshcmd=subprocess.Popen('netsh ', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE )
+SCOPE = input("Scope DNS - ")
+IP = input("IP - ")
+MAC = input("MAC - ")
+DESCRIPTION = input("Description - ")
+
+netshcmd = subprocess.Popen('netsh ', shell=True, stderr=subprocess.PIPE, stdout=subprocess.PIPE )
 output, errors =  netshcmd.communicate()
 if errors:
-    print "WARNING: ", errors
+    print("WARNING: woow", errors)
 else:
-    print "SUCCESS ", output
+    print("SUCCESS: ok ", output)

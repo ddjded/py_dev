@@ -1,0 +1,14 @@
+<html>
+    <head>
+      {% if title %}
+      <title>{{ title }} - MicroSite</title>
+      {% else %}
+      <title>Welcome to MicroSite</title>
+      {% endif %}
+    </head>
+    <body>
+        <div>MicroSite: <a href="/index">Home</a></div>
+        <hr>
+        {% block content %}{% endblock %}
+    </body>
+</html>
